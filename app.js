@@ -1,9 +1,10 @@
 import express from "express";
 import { connectDB, getDB } from "./connectDB.js";
+import router from "./router.js";
 
 const app = express();
 app.use(express.json());
-
+app.use('/',router)
 await connectDB(); 
 
 const db = getDB(); 
