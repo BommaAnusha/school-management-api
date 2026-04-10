@@ -1,18 +1,28 @@
-import express from 'express';
-import router from './router.js';
-import { connectDB } from './connectDB.js';
-import { config } from 'dotenv';
+import express from "express";
+import { connectDB, getDB } from "./connectDB.js";
 
-config();
 const app = express();
-
 app.use(express.json());
-app.use('/api', router);
 
-const port = process.env.PORT || 3001;
+await connectDB(); 
 
-connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Server running at port ${port}`);
-  });
-});
+const db = getDB(); 
+
+const createTableQuery = `
+CREATE TABLE IF NOT EXISTS schools (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  latitude FLOAT NOT NULL,
+  longitude FLOAT NOT NULL
+);
+`;
+
+try {
+  await db.execute(createTableQuery);
+  console.log("Schools table ready");
+} catch (err) {
+  console.error("Table creation failed:", err);
+}
+
+app.listen(3000, () => console.log("Server running"));
